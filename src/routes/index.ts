@@ -1,8 +1,9 @@
 import { Router } from "express";
-import authRouter from "./auth";
+
+import employeesRouter from "./employees";
 
 const rootRouter: Router = Router();
 
-rootRouter.use("/auth", authRouter);
+rootRouter.use("/employees", employeesRouter);
 
 export default rootRouter;

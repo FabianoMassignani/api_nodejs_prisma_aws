@@ -1,19 +1,22 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
+import connectDB from "./config/database";
+
 import { PORT } from "./secrets";
 import rootRouter from "./routes";
+import { errorMidleware } from "./middlewares/errorMidleware";
 
 const app: Express = express();
 
+connectDB();
+
 app.use(cors());
+app.use(express.json());
 
-app.use("api", rootRouter);
+app.use("/api", rootRouter);
 
-export const prisma = new PrismaClient({
-  log: ["query"],
-});
+app.use(errorMidleware);
 
 app.listen(PORT, () => {
-  console.log("Server is running on port 3002");
+  console.log("Server is running on port 3001");
 });
