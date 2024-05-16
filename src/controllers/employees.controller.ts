@@ -12,10 +12,18 @@ export const getEmployees = async (
   res: Response,
   next: NextFunction
 ) => {
-  const EmployeesData: Employee[] =
-    await employeesServiceInstance.findAllEmployees();
+  const orderBy: string | undefined = req.query.orderBy
+    ? String(req.query.orderBy)
+    : undefined;
+    
+  const search: string | undefined = req.query.search
+    ? String(req.query.search)
+    : undefined;
 
-  res.status(200).json({ data: EmployeesData });
+  const employeesData: Employee[] =
+    await employeesServiceInstance.findAllEmployees(orderBy, search);
+
+  res.status(200).json({ data: employeesData });
 };
 
 export const getEmployeeById = async (
@@ -126,7 +134,7 @@ export const deleteEmployee = async (
   if (!employeeId) {
     throw new BadRequestException("Id is required", ErrorCode.BAD_REQUEST);
   }
-  
+
   const deleteUserData: Employee =
     await employeesServiceInstance.deleteEmployee(employeeId);
 

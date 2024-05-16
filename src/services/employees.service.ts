@@ -10,15 +10,38 @@ import { isEmpty } from "../utils/util";
 class EmployeesService {
   public employees = employeesModel;
 
-  public async findAllEmployees(): Promise<Employee[]> {
-    const users: Employee[] = await this.employees.find();
-    return users;
+  public async findAllEmployees(
+    orderBy: string | undefined,
+    search: string | undefined
+  ): Promise<Employee[]> {
+    let query = {};
+
+    if (search) {
+      query = {
+        $or: [
+          //case-insensitive
+          { nome: { $regex: search, $options: "i" } },
+          { cargo: { $regex: search, $options: "i" } },
+          { departamento: { $regex: search, $options: "i" } },
+        ],
+      };
+    }
+
+    let employees: Employee[];
+
+    if (orderBy) {
+      employees = await this.employees.find(query).sort(orderBy);
+    } else {
+      employees = await this.employees.find(query);
+    }
+
+    return employees;
   }
 
   public async findEmployeeById(employeeId: string): Promise<Employee> {
     if (isEmpty(employeeId)) {
       throw new NotFoundException(
-        "Employee ID is required",
+        "Employee id is required",
         ErrorCode.NOT_FOUND
       );
     }
@@ -64,7 +87,7 @@ class EmployeesService {
   ): Promise<Employee> {
     if (isEmpty(employeeId)) {
       throw new NotFoundException(
-        "Employee ID is required",
+        "Employee id is required",
         ErrorCode.NOT_FOUND
       );
     }
