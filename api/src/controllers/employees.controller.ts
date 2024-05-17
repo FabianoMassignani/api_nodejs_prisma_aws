@@ -1,22 +1,28 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequestException } from "../exceptions/bad-request";
 import { ErrorCode } from "../exceptions/root";
-import { Employee } from "../interfaces/employees.interface";
+import {
+  Employee,
+  RequestgetEmployees,
+} from "../interfaces/employees.interface";
 import employeesService from "../services/employees.service";
 import { CreateEmployeesDto } from "../dtos/employees.dto";
 
 const employeesServiceInstance = new employeesService();
 
 export const getEmployees = async (
-  req: Request,
+  req: Request<{}, {}, {}, RequestgetEmployees>,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ) => {
-  const orderBy: string = req.query.orderBy
-    ? String(req.query.orderBy)
-    : "nome";
-  const sortBy: string = req.query.sortBy ? String(req.query.sortBy) : "asc";
-  const search: string = req.query.search ? String(req.query.search) : "";
+  const { orderBy = "nome", sortBy = "asc", search = "" } = req.query;
+
+  if (!["nome", "idade", "cargo"].includes(orderBy)) {
+    throw new Error("Invalid orderBy parameter.");
+  }
+  if (!["asc", "desc"].includes(sortBy)) {
+    throw new Error("Invalid sortBy parameter.");
+  }
 
   const employeesData: Employee[] =
     await employeesServiceInstance.findAllEmployees(search, orderBy, sortBy);

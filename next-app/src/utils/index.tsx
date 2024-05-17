@@ -1,2 +1,2 @@
 export { formatDate } from './formatDate';
-export { getOrderParams } from './order';
+export { getOrderParams } from './orderParams';

@@ -12,7 +12,7 @@ import DeleteAlert from "../../components/deleteAlert";
 import AddEmployeeModal from "./forms/AddEmployeeModal";
 import EditEmployeeModal from "./forms/EditEmployeeModal";
 
-import { getOrderParams } from "../../utils/order";
+import { getOrderParams } from "../../utils/orderParams";
 
 import { AddIcon, EditIcon, DeleteIcon, RepeatIcon } from "@chakra-ui/icons";
 import {

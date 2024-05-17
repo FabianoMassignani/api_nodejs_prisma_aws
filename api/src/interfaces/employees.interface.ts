@@ -4,3 +4,9 @@ export interface Employee {
   departamento: string;
   dataAdmissao: Date;
 }
+
+export interface RequestgetEmployees {
+  orderBy?: "nome" | "cargo" | "departamento" | "dataAdmissao";
+  sortBy?: "asc" | "desc";
+  search?: string;
+}
