@@ -13,7 +13,7 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 
-import { addEmployee } from "../../lib/actions/employee";
+import { addEmployee } from "../../../lib/actions/employee";
 
 type AddEmployeeModalProps = {
   isOpen: boolean;
@@ -41,7 +41,6 @@ const AddEmployeeModal = ({
 
     try {
       await addEmployee(newEmployee);
-
       onLoadEmployees();
       onClose();
     } catch (error) {

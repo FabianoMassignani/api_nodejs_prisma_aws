@@ -10,7 +10,7 @@ const employeesServiceInstance = new employeesService();
 export const getEmployees = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const orderBy: string = req.query.orderBy
     ? String(req.query.orderBy)
@@ -27,7 +27,7 @@ export const getEmployees = async (
 export const getEmployeeById = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const employeeId: string = req.params.id;
 
@@ -45,7 +45,7 @@ export const getEmployeeById = async (
 export const createEmployee = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const employeData: CreateEmployeesDto = req.body;
 
@@ -82,7 +82,7 @@ export const createEmployee = async (
 export const updateEmployee = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const employeeId: string = req.params.id;
 
@@ -125,7 +125,7 @@ export const updateEmployee = async (
 export const deleteEmployee = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const employeeId: string = req.params.id;
 

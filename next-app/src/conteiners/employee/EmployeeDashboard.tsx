@@ -9,8 +9,8 @@ import CustomButton from "../../components/button";
 import CustomIconButton from "../../components/IconButton";
 import LoadingSpinner from "../../components/loadingSpinner";
 import DeleteAlert from "../../components/deleteAlert";
-import AddEmployeeModal from "./AddEmployeeModal";
-import EditEmployeeModal from "./EditEmployeeModal";
+import AddEmployeeModal from "./forms/AddEmployeeModal";
+import EditEmployeeModal from "./forms/EditEmployeeModal";
 
 import { getOrderParams } from "../../utils/order";
 

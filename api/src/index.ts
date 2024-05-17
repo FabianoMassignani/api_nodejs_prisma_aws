@@ -17,5 +17,5 @@ app.use("/api", rootRouter);
 app.use(errorMidleware);
 
 app.listen(PORT, () => {
-  console.log("Server is running on port 3001");
+  console.log(`Server is running on port ${PORT}`);
 });

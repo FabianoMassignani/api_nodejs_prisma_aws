@@ -1,35 +1,5 @@
 import { Employee } from "../../types";
 
-export async function getEmployees(
-  search?: string,
-  sortBy?: string,
-  orderBy?: string
-): Promise<{ data: Employee[] }> {
-  try {
-    const hostApi = process.env.API_URL;
-
-    let url = `${hostApi}/api/employees`;
-
-    if (sortBy) {
-      url += `?sortBy=${sortBy}`;
-    }
-
-    if (orderBy) {
-      url += `&orderBy=${orderBy}`;
-    }
-
-    if (search) {
-      url += `&search=${search}`;
-    }
-
-    const response = await fetch(url);
-
-    return response.json();
-  } catch (error) {
-    return { data: [] };
-  }
-}
-
 export async function addEmployee(employee: Employee) {
   try {
     const hostApi = process.env.API_URL;
@@ -76,4 +46,34 @@ export async function deleteEmployee(id: string) {
 
     return response.json();
   } catch (error: any) {}
+}
+
+export async function getEmployees(
+  search?: string,
+  sortBy?: string,
+  orderBy?: string
+): Promise<{ data: Employee[] }> {
+  try {
+    const hostApi = process.env.API_URL;
+
+    let url = `${hostApi}/api/employees`;
+
+    if (sortBy) {
+      url += `?sortBy=${sortBy}`;
+    }
+
+    if (orderBy) {
+      url += `&orderBy=${orderBy}`;
+    }
+
+    if (search) {
+      url += `&search=${search}`;
+    }
+
+    const response = await fetch(url);
+
+    return response.json();
+  } catch (error) {
+    return { data: [] };
+  }
 }

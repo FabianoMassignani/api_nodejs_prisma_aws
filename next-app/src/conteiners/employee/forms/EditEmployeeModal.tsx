@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
  
-import { updateEmployee } from "../../lib/actions/employee";
-import CustomButton from "../../components/button";
-import { Employee } from "../../types";
+import { updateEmployee } from "../../../lib/actions/employee";
+import CustomButton from "../../../components/button";
+import { Employee } from "../../../types";
 import {
   Modal,
   ModalOverlay,
