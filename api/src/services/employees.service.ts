@@ -11,10 +11,11 @@ class EmployeesService {
   public employees = employeesModel;
 
   public async findAllEmployees(
-    orderBy: string | undefined,
-    search: string | undefined
+    search: string = "",
+    orderBy: string = "nome",
+    sortBy: string = "asc"
   ): Promise<Employee[]> {
-    let query = {};
+    let query: any = {};
 
     if (search) {
       query = {
@@ -28,8 +29,12 @@ class EmployeesService {
 
     let employees: Employee[];
 
-    if (orderBy) {
-      employees = await this.employees.find(query).sort(orderBy);
+    const sortByValue = orderBy === "asc" ? 1 : -1;
+
+    if (orderBy && sortBy) {
+      employees = await this.employees
+        .find(query)
+        .sort({ [sortBy]: sortByValue });
     } else {
       employees = await this.employees.find(query);
     }

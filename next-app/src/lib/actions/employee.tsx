@@ -1,14 +1,32 @@
 import { Employee } from "../../types";
 
-export async function getEmployees() {
+export async function getEmployees(
+  search?: string,
+  sortBy?: string,
+  orderBy?: string
+): Promise<{ data: Employee[] }> {
   try {
     const hostApi = process.env.API_URL;
 
-    const response = await fetch(`${hostApi}/api/employees`);
+    let url = `${hostApi}/api/employees`;
+
+    if (sortBy) {
+      url += `?sortBy=${sortBy}`;
+    }
+
+    if (orderBy) {
+      url += `&orderBy=${orderBy}`;
+    }
+
+    if (search) {
+      url += `&search=${search}`;
+    }
+
+    const response = await fetch(url);
 
     return response.json();
-  } catch (error: any) {
-    console.error(error);
+  } catch (error) {
+    return { data: [] };
   }
 }
 
@@ -26,7 +44,7 @@ export async function addEmployee(employee: Employee) {
 
     return response.json();
   } catch (error: any) {
-    console.error(error);
+    return { data: {} };
   }
 }
 
@@ -44,7 +62,7 @@ export async function updateEmployee(id: string, employee: Employee) {
 
     return response.json();
   } catch (error: any) {
-    console.error(error);
+    return { data: {} };
   }
 }
 
@@ -57,7 +75,5 @@ export async function deleteEmployee(id: string) {
     });
 
     return response.json();
-  } catch (error: any) {
-    console.error(error);
-  }
+  } catch (error: any) {}
 }

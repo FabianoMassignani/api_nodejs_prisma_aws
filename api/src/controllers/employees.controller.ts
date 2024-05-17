@@ -12,16 +12,14 @@ export const getEmployees = async (
   res: Response,
   next: NextFunction
 ) => {
-  const orderBy: string | undefined = req.query.orderBy
+  const orderBy: string = req.query.orderBy
     ? String(req.query.orderBy)
-    : undefined;
-    
-  const search: string | undefined = req.query.search
-    ? String(req.query.search)
-    : undefined;
+    : "nome";
+  const sortBy: string = req.query.sortBy ? String(req.query.sortBy) : "asc";
+  const search: string = req.query.search ? String(req.query.search) : "";
 
   const employeesData: Employee[] =
-    await employeesServiceInstance.findAllEmployees(orderBy, search);
+    await employeesServiceInstance.findAllEmployees(search, orderBy, sortBy);
 
   res.status(200).json({ data: employeesData });
 };

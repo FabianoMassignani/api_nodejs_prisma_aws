@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 
-import AddEmployeeModal from "./AddEmployeeModal";
-import EditEmployeeModal from "./EditEmployeeModal";
-
 import { getEmployees, deleteEmployee } from "../../lib/actions/employee";
 
 import { Employee } from "../../types";
@@ -12,9 +9,12 @@ import CustomButton from "../../components/button";
 import CustomIconButton from "../../components/IconButton";
 import LoadingSpinner from "../../components/loadingSpinner";
 import DeleteAlert from "../../components/deleteAlert";
+import AddEmployeeModal from "./AddEmployeeModal";
+import EditEmployeeModal from "./EditEmployeeModal";
 
-import { AddIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
+import { getOrderParams } from "../../utils/order";
 
+import { AddIcon, EditIcon, DeleteIcon, RepeatIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
@@ -26,6 +26,9 @@ import {
   Th,
   Td,
   useDisclosure,
+  Input,
+  Select,
+  Button,
 } from "@chakra-ui/react";
 
 const EmployeeDashboard = () => {
@@ -33,6 +36,13 @@ const EmployeeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [selectedEmployee, setEmployee] = useState<Employee | null>(null);
+  const [SelectOrder, setSelectOrder] = useState("nomeasc");
+  const [search, setSearch] = useState("");
+  const [orderBy, setSortBy] = useState("nome");
+  const [sortBy, setOrderBy] = useState("asc");
+
+  const [searchTimeout, setSearchTimeout] =
+    useState<ReturnType<typeof setTimeout>>();
 
   const {
     isOpen: isAddModalOpen,
@@ -47,13 +57,25 @@ const EmployeeDashboard = () => {
   } = useDisclosure();
 
   useEffect(() => {
-    onLoadEmployees();
-  }, []);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      onLoadEmployees();
+    }, 800);
+
+    setSearchTimeout(timeout);
+
+    return () => clearTimeout(timeout);
+  }, [search, orderBy, sortBy]);
 
   const onLoadEmployees = async () => {
     setLoading(true);
+
     try {
-      const res = await getEmployees();
+      const res = await getEmployees(search, sortBy, orderBy);
+
       setEmployees(res.data);
     } catch (error) {
       setEmployees([]);
@@ -84,6 +106,13 @@ const EmployeeDashboard = () => {
     await onLoadEmployees();
   };
 
+  const handleOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { orderBy, sortBy } = getOrderParams(e.target.value);
+
+    setOrderBy(orderBy);
+    setSortBy(sortBy);
+  };
+
   return (
     <Box p={5}>
       <Flex justifyContent="space-between" alignItems="center" mb={5}>
@@ -93,45 +122,84 @@ const EmployeeDashboard = () => {
         </CustomButton>
       </Flex>
 
+      <Flex alignItems="center" paddingBottom={4}>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          mr={3}
+          color={"black"}
+        />
+
+        <CustomIconButton
+          label="reload Funcionário"
+          icon={<RepeatIcon />}
+          color="gray"
+          onClick={() => onLoadEmployees()}
+        />
+
+        <Box display="inline-block" width="10px" />
+
+        <Select
+          color={"black"}
+          value={SelectOrder}
+          onChange={(e) => {
+            setSelectOrder(e.target.value);
+            handleOrderChange(e);
+          }}
+          width="200px"
+        >
+          <option value="nomeasc">Nome Asc </option>
+          <option value="nomedesc">Nome Desc</option>
+          <option value="cargoasc">Cargo Asc</option>
+          <option value="cargodesc">Cargo Desc</option>
+          <option value="departamentoasc">Departamento Asc</option>
+          <option value="departamentodesc">Departamento Desc</option>
+          <option value="dataAdmissaoasc">Data de Admissão Asc</option>
+          <option value="dataAdmissaodesc">Data de Admissão Desc</option>
+        </Select>
+      </Flex>
+
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Nome</Th>
-              <Th>cargo</Th>
-              <Th>Departamento</Th>
-              <Th>Data de admissão</Th>
-              <Th>Ações</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {employees.map((employee) => (
-              <Tr key={employee._id}>
-                <Td>{employee.nome}</Td>
-                <Td>{employee.cargo}</Td>
-                <Td>{employee.departamento}</Td>
-                <Td>{formatDate(employee.dataAdmissao)}</Td>
-                <Td>
-                  <CustomIconButton
-                    label="Editar Funcionário"
-                    icon={<EditIcon />}
-                    color="teal"
-                    onClick={() => handleEditEmployee(employee)}
-                  />
-                  <Box display="inline-block" width="10px" />
-                  <CustomIconButton
-                    label="Deletar Funcionário"
-                    icon={<DeleteIcon />}
-                    color="red"
-                    onClick={() => handleDeleteEmployee(employee)}
-                  />
-                </Td>
+        <Box>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Nome</Th>
+                <Th>cargo</Th>
+                <Th>Departamento</Th>
+                <Th>Data de admissão</Th>
+                <Th>Ações</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody>
+              {employees.map((employee) => (
+                <Tr key={employee._id}>
+                  <Td>{employee.nome}</Td>
+                  <Td>{employee.cargo}</Td>
+                  <Td>{employee.departamento}</Td>
+                  <Td>{formatDate(employee.dataAdmissao)}</Td>
+                  <Td>
+                    <CustomIconButton
+                      label="Editar Funcionário"
+                      icon={<EditIcon />}
+                      color="teal"
+                      onClick={() => handleEditEmployee(employee)}
+                    />
+                    <Box display="inline-block" width="10px" />
+                    <CustomIconButton
+                      label="Deletar Funcionário"
+                      icon={<DeleteIcon />}
+                      color="red"
+                      onClick={() => handleDeleteEmployee(employee)}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
       )}
 
       <AddEmployeeModal
@@ -154,7 +222,6 @@ const EmployeeDashboard = () => {
         onClose={() => setDeleteAlertOpen(false)}
         onDelete={() => {
           setDeleteAlertOpen(false);
-
           handleConfirmDelete();
         }}
       />
