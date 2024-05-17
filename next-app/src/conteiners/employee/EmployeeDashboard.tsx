@@ -127,7 +127,6 @@ const EmployeeDashboard = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           mr={3}
-          color={"black"}
         />
 
         <CustomIconButton
@@ -140,7 +139,6 @@ const EmployeeDashboard = () => {
         <Box display="inline-block" width="10px" />
 
         <Select
-          color={"black"}
           value={SelectOrder}
           onChange={(e) => {
             setSelectOrder(e.target.value);
