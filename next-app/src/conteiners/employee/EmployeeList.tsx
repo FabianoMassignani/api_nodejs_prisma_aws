@@ -1,7 +1,21 @@
 import { useEffect, useState } from "react";
+
+import AddEmployeeModal from "./AddEmployeeModal";
+import EditEmployeeModal from "./EditEmployeeModal";
+
+import { getEmployees, deleteEmployee } from "../../lib/actions/employee";
+
+import { Employee } from "../../types";
+import { formatDate } from "../../utils";
+
+import CustomButton from "../../components/button";
+import CustomIconButton from "../../components/IconButton";
+import LoadingSpinner from "../../components/loadingSpinner";
+
+import { AddIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
+
 import {
   Box,
-  Button,
   Flex,
   Heading,
   Table,
@@ -10,76 +24,69 @@ import {
   Tr,
   Th,
   Td,
-  IconButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AddIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import AddEmployeeModal from "./AddEmployeeModal";
-import EditEmployeeModal from "./EditEmployeeModal";
-import { getEmployees } from "../../lib/actions/employee";
-
-type Employee = {
-  _id: string;
-  nome: string;
-  cargo: string;
-  departamento: string;
-  dataAdmissao: string;
-};
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEmployee, setEmployee] = useState<Employee | null>(null);
+
   const {
     isOpen: isAddModalOpen,
     onOpen: onAddModalOpen,
     onClose: onAddModalClose,
   } = useDisclosure();
+
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
     onClose: onEditModalClose,
   } = useDisclosure();
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
-    null
-  );
 
   useEffect(() => {
-    getEmployees()
-      .then((res) => {
-        setEmployees(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setEmployees([]);
-        setLoading(false);
-        console.error(error);
-      });
+    onLoadEmployees();
   }, []);
 
+  const onLoadEmployees = async () => {
+    setLoading(true);
+    try {
+      const res = await getEmployees();
+      setEmployees(res.data);
+    } catch (error) {
+      setEmployees([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleEditEmployee = (employee: Employee) => {
-    setSelectedEmployee(employee);
-    onEditModalOpen();
+    setEmployee(employee);
+
+    if (employee) {
+      onEditModalOpen();
+    }
   };
 
   const handleDeleteEmployee = (employee: Employee) => {
-    // Implemente a lógica para excluir o funcionário
+    if (!employee._id) return;
+
+    deleteEmployee(employee._id).then(() => {
+      onLoadEmployees();
+    });
   };
 
   return (
     <Box p={5}>
       <Flex justifyContent="space-between" alignItems="center" mb={5}>
         <Heading as="h1">Funcionários</Heading>
-        <Button
-          leftIcon={<AddIcon />}
-          colorScheme="teal"
-          onClick={onAddModalOpen}
-        >
+        <CustomButton icon={<AddIcon />} color="teal" onClick={onAddModalOpen}>
           Adicionar Funcionário
-        </Button>
+        </CustomButton>
       </Flex>
 
       {loading ? (
-        <p>Loading...</p>
+        <LoadingSpinner />
       ) : (
         <Table variant="simple">
           <Thead>
@@ -97,18 +104,20 @@ const EmployeeList = () => {
                 <Td>{employee.nome}</Td>
                 <Td>{employee.cargo}</Td>
                 <Td>{employee.departamento}</Td>
-                <Td>{employee.dataAdmissao}</Td>
+                <Td>{formatDate(employee.dataAdmissao)}</Td>
                 <Td>
-                  <IconButton
-                    aria-label="Edit Employee"
+                  <CustomIconButton
+                    label="Editar Funcionário"
                     icon={<EditIcon />}
-                    mr={2}
+                    color="teal"
                     onClick={() => handleEditEmployee(employee)}
                   />
-                  <IconButton
-                    aria-label="Delete Employee"
+                  <Box display="inline-block" width="10px" />
+                  <CustomIconButton
+                    
+                    label="Deletar Funcionário"
                     icon={<DeleteIcon />}
-                    colorScheme="red"
+                    color="red"
                     onClick={() => handleDeleteEmployee(employee)}
                   />
                 </Td>
@@ -118,12 +127,18 @@ const EmployeeList = () => {
         </Table>
       )}
 
-      <AddEmployeeModal isOpen={isAddModalOpen} onClose={onAddModalClose} />
+      <AddEmployeeModal
+        isOpen={isAddModalOpen}
+        onClose={onAddModalClose}
+        onLoadEmployees={onLoadEmployees}
+      />
+
       {selectedEmployee && (
         <EditEmployeeModal
           isOpen={isEditModalOpen}
           onClose={onEditModalClose}
           employee={selectedEmployee}
+          onLoadEmployees={onLoadEmployees}
         />
       )}
     </Box>

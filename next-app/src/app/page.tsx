@@ -1,6 +1,6 @@
 "use client";
 
-import EmployeeList from "./components/employee/EmployeeList";
+import EmployeeList from "../conteiners/employee/EmployeeList";
 
 const HomePage: React.FC = () => {
   return <EmployeeList />;

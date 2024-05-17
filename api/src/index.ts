@@ -1,7 +1,6 @@
 import express, { Express } from "express";
 import cors from "cors";
 import connectDB from "./config/database";
-
 import { PORT } from "./secrets";
 import rootRouter from "./routes";
 import { errorMidleware } from "./middlewares/errorMidleware";
