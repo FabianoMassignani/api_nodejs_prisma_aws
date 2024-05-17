@@ -19,7 +19,6 @@ class EmployeesService {
     if (search) {
       query = {
         $or: [
-          //case-insensitive
           { nome: { $regex: search, $options: "i" } },
           { cargo: { $regex: search, $options: "i" } },
           { departamento: { $regex: search, $options: "i" } },

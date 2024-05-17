@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import {
   Button,
   FormControl,
@@ -13,8 +12,6 @@ import {
   ModalCloseButton,
   ModalFooter,
 } from "@chakra-ui/react";
-
-import CustomButton from "../../components/button";
 
 import { addEmployee } from "../../lib/actions/employee";
 
@@ -33,20 +30,24 @@ const AddEmployeeModal = ({
   const [cargo, setPosition] = useState("");
   const [departamento, setDepartment] = useState("");
   const [dataAdmissao, setStartDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setIsLoading(true);
+
     const newEmployee = { nome, cargo, departamento, dataAdmissao };
 
-    await addEmployee(newEmployee);
-    onLoadEmployees();
-    onClose();
+    try {
+      await addEmployee(newEmployee);
 
-    setName("");
-    setPosition("");
-    setDepartment("");
-    setStartDate("");
+      onLoadEmployees();
+      onClose();
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -89,7 +90,7 @@ const AddEmployeeModal = ({
 
             <br />
             <ModalFooter>
-              <Button type="submit" colorScheme="teal">
+              <Button type="submit" colorScheme="teal" isLoading={isLoading}>
                 Adicionar Funcionário
               </Button>
             </ModalFooter>

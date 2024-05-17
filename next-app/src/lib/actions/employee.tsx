@@ -2,9 +2,11 @@ import { Employee } from "../../types";
 
 export async function getEmployees() {
   try {
-    let employees = await fetch("http://localhost:3001/api/employees");
+    const hostApi = process.env.API_URL;
 
-    return employees.json();
+    const response = await fetch(`${hostApi}/api/employees`);
+
+    return response.json();
   } catch (error: any) {
     console.error(error);
   }
@@ -12,13 +14,17 @@ export async function getEmployees() {
 
 export async function addEmployee(employee: Employee) {
   try {
-    await fetch("http://localhost:3001/api/employees", {
+    const hostApi = process.env.API_URL;
+
+    const response = await fetch(`${hostApi}/api/employees`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(employee),
     });
+
+    return response.json();
   } catch (error: any) {
     console.error(error);
   }
@@ -26,13 +32,17 @@ export async function addEmployee(employee: Employee) {
 
 export async function updateEmployee(id: string, employee: Employee) {
   try {
-    await fetch(`http://localhost:3001/api/employees/${id}`, {
+    const hostApi = process.env.API_URL;
+
+    const response = await fetch(`${hostApi}/api/employees/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(employee),
     });
+
+    return response.json();
   } catch (error: any) {
     console.error(error);
   }
@@ -40,9 +50,13 @@ export async function updateEmployee(id: string, employee: Employee) {
 
 export async function deleteEmployee(id: string) {
   try {
-    await fetch(`http://localhost:3001/api/employees/${id}`, {
+    const hostApi = process.env.API_URL;
+
+    const response = await fetch(`${hostApi}/api/employees/${id}`, {
       method: "DELETE",
     });
+
+    return response.json();
   } catch (error: any) {
     console.error(error);
   }

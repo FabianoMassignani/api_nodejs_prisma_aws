@@ -11,6 +11,7 @@ import { formatDate } from "../../utils";
 import CustomButton from "../../components/button";
 import CustomIconButton from "../../components/IconButton";
 import LoadingSpinner from "../../components/loadingSpinner";
+import DeleteAlert from "../../components/deleteAlert";
 
 import { AddIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
@@ -27,9 +28,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-const EmployeeList = () => {
+const EmployeeDashboard = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [selectedEmployee, setEmployee] = useState<Employee | null>(null);
 
   const {
@@ -71,9 +73,15 @@ const EmployeeList = () => {
   const handleDeleteEmployee = (employee: Employee) => {
     if (!employee._id) return;
 
-    deleteEmployee(employee._id).then(() => {
-      onLoadEmployees();
-    });
+    setDeleteAlertOpen(true);
+    setEmployee(employee);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedEmployee?._id) return;
+
+    await deleteEmployee(selectedEmployee._id);
+    await onLoadEmployees();
   };
 
   return (
@@ -114,7 +122,6 @@ const EmployeeList = () => {
                   />
                   <Box display="inline-block" width="10px" />
                   <CustomIconButton
-                    
                     label="Deletar Funcionário"
                     icon={<DeleteIcon />}
                     color="red"
@@ -141,8 +148,18 @@ const EmployeeList = () => {
           onLoadEmployees={onLoadEmployees}
         />
       )}
+
+      <DeleteAlert
+        isOpen={deleteAlertOpen}
+        onClose={() => setDeleteAlertOpen(false)}
+        onDelete={() => {
+          setDeleteAlertOpen(false);
+
+          handleConfirmDelete();
+        }}
+      />
     </Box>
   );
 };
 
-export default EmployeeList;
+export default EmployeeDashboard;

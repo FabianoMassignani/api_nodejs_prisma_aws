@@ -1,4 +1,8 @@
 import { useState, useEffect } from "react";
+ 
+import { updateEmployee } from "../../lib/actions/employee";
+import CustomButton from "../../components/button";
+import { Employee } from "../../types";
 import {
   Modal,
   ModalOverlay,
@@ -12,12 +16,6 @@ import {
   Input,
   Button,
 } from "@chakra-ui/react";
-
-import { updateEmployee } from "../../lib/actions/employee";
-
-import CustomButton from "../../components/button";
-
-import { Employee } from "../../types";
 
 interface EditEmployeeModalProps {
   isOpen: boolean;
@@ -36,6 +34,7 @@ const EditEmployeeModal = ({
   const [cargo, setPosition] = useState("");
   const [departamento, setDepartment] = useState("");
   const [dataAdmissao, setStartDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (employee) {
@@ -53,12 +52,18 @@ const EditEmployeeModal = ({
 
     if (!employee._id) return;
 
+    setIsLoading(true);
+
     const updatedEmployee = { nome, cargo, departamento, dataAdmissao };
 
-    await updateEmployee(employee._id, updatedEmployee);
-
-    onLoadEmployees();
-    onClose();
+    try {
+      await updateEmployee(employee._id, updatedEmployee);
+      onLoadEmployees();
+      onClose();
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -101,7 +106,12 @@ const EditEmployeeModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button type="submit" colorScheme="teal" mr={3}>
+            <Button
+              type="submit"
+              colorScheme="teal"
+              mr={3}
+              isLoading={isLoading}
+            >
               Salvar
             </Button>
 

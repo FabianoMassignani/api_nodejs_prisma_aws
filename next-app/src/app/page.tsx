@@ -1,9 +1,9 @@
 "use client";
 
-import EmployeeList from "../conteiners/employee/EmployeeList";
+import EmployeeDashboard  from "../conteiners/employee/EmployeeDashboard";
 
 const HomePage: React.FC = () => {
-  return <EmployeeList />;
+  return <EmployeeDashboard />;
 };
 
 export default HomePage;
