@@ -7,7 +7,22 @@ import { ErrorCode } from "../exceptions/root";
 import { CreateEmployeesDto } from "../dtos/employees.dto";
 import { isEmpty } from "../utils/util";
 
-class EmployeesService {
+export interface EmployeesServiceInterface {
+  findAllEmployees(
+    search: string,
+    orderBy: string,
+    sortBy: string
+  ): Promise<Employee[]>;
+  findEmployeeById(employeeId: string): Promise<Employee>;
+  createEmployee(employeeData: CreateEmployeesDto): Promise<Employee>;
+  updateEmployee(
+    employeeId: string,
+    employeeData: CreateEmployeesDto
+  ): Promise<Employee>;
+  deleteEmployee(employeeId: string): Promise<Employee>;
+}
+
+class EmployeesService implements EmployeesServiceInterface {
   public employees = employeesModel;
 
   public async findAllEmployees(
