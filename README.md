@@ -26,11 +26,11 @@ cp .env
 ```
 
 ```
-MONGO_URI="mongodb+srv://fabiano:fabiano@app.4x3lw9q.mongodb.net/?retryWrites=true&w=majority&appName=app"
+MONGO_URI="mongodb+srv://root:root@app.4x3lw9q.mongodb.net/?retryWrites=true&w=majority&appName=app"
 PORT=3001
 ```
 
-4. Inicie o servidor de desenvolvimento:
+4. Inicie o servidor de desenvolvimento da aplicação e do servidor:
 
 ```
 cd .\api\
